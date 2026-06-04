@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+            <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -11,10 +11,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Tajawal:wght@500;700;800;900&display=swap" rel="stylesheet">
     
     <style>
-        /* --- متغيرات الألوان المتطابقة مع غرف اللعب وإضافة ألوان المساعد --- */
-        body.theme-royal { --bg-color: #D2D2D6; --panel-bg: #F4F1EA; --border-color: #C9A86A; --text-main: #0B174D; --text-muted: #2C447F; --board-light: #F4F1EA; --board-dark: #1A2E73; --primary-color: #0B174D; --primary-hover: #1A2E73; --danger-color: #A8834C; --timer-bg: #F4F1EA; --timer-border: #C9A86A; --helper-glow: rgba(201, 168, 106, 0.95); }
-        body.theme-modern { --bg-color: #0f172a; --panel-bg: #1e293b; --border-color: #334155; --text-main: #f8fafc; --text-muted: #94a3b8; --board-light: #cbd5e1; --board-dark: #475569; --primary-color: #3b82f6; --primary-hover: #2563eb; --danger-color: #ef4444; --timer-bg: #0f172a; --timer-border: #334155; --helper-glow: rgba(59, 130, 246, 0.95); }
-        body.theme-classic { --bg-color: #ebecd0; --panel-bg: #ffffff; --border-color: #dcdcdc; --text-main: #2b2b2b; --text-muted: #737373; --board-light: #ebecd0; --board-dark: #739552; --primary-color: #81b64c; --primary-hover: #6a9c3d; --danger-color: #fa4b4b; --timer-bg: #f8f8f8; --timer-border: #cccccc; --helper-glow: rgba(250, 75, 75, 0.95); }
+        /* --- الثيمات --- */
+        body.theme-royal { --bg-color: #D2D2D6; --panel-bg: #F4F1EA; --border-color: #C9A86A; --text-main: #0B174D; --text-muted: #2C447F; --board-light: #F4F1EA; --board-dark: #1A2E73; --primary-color: #0B174D; --danger-color: #A8834C; --timer-bg: #F4F1EA; --timer-border: #C9A86A; }
+        body.theme-modern { --bg-color: #0f172a; --panel-bg: #1e293b; --border-color: #334155; --text-main: #f8fafc; --text-muted: #94a3b8; --board-light: #cbd5e1; --board-dark: #475569; --primary-color: #3b82f6; --danger-color: #ef4444; --timer-bg: #0f172a; --timer-border: #334155; }
+        body.theme-classic { --bg-color: #ebecd0; --panel-bg: #ffffff; --border-color: #dcdcdc; --text-main: #2b2b2b; --text-muted: #737373; --board-light: #ebecd0; --board-dark: #739552; --primary-color: #81b64c; --danger-color: #fa4b4b; --timer-bg: #f8f8f8; --timer-border: #cccccc; }
 
         * { box-sizing: border-box; font-family: 'Tajawal', 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
@@ -38,36 +38,31 @@
         .white-1e1d7 { background-color: var(--board-light) !important; color: var(--board-dark) !important; }
         .black-3c85d { background-color: var(--board-dark) !important; color: var(--board-light) !important; }
 
-        /* --- الإحداثية داخل الرقعة بدون تظليل خلفي، مع تحديد (Stroke) حول النص --- */
+        /* --- تصميم الإحداثية المطابق تماماً لـ Lichess --- */
         #target-overlay { 
             position: absolute; 
             top: 50%; 
             left: 50%; 
             transform: translate(-50%, -50%); 
-            font-size: 6.5rem; 
+            font-size: 8.5rem; /* حجم ضخم */
             font-weight: 900; 
-            color: #ffffff; 
-            font-family: 'Inter', monospace; 
-            letter-spacing: 2px; 
+            color: rgba(255, 255, 255, 0.9); /* أبيض شفاف قليلاً لعدم طمس القطع */
+            font-family: Arial, Helvetica, sans-serif; /* خط كلاسيكي بسيط مثل Lichess */
+            letter-spacing: -4px; 
             text-transform: lowercase;
             pointer-events: none; 
             z-index: 20; 
             display: none;
-            /* إنشاء حدود للنص ليكون مرئياً بوضوح على اللونين الأبيض والأسود */
-            text-shadow: 
-                3px 3px 0 var(--primary-color),
-                -3px -3px 0 var(--primary-color),
-                3px -3px 0 var(--primary-color),
-                -3px 3px 0 var(--primary-color),
-                0px 8px 20px rgba(0,0,0,0.5);
+            /* ظل أسود عميق وناعم يبرز النص بدون حدود مزعجة */
+            text-shadow: 0 10px 25px rgba(0,0,0,0.7), 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        /* ألوان النقر والمساعد */
+        /* ألوان النقر (استجابة فورية) */
         .correct { background-color: rgba(74, 222, 128, 0.85) !important; z-index: 5;}
         .wrong { background-color: rgba(239, 68, 68, 0.85) !important; z-index: 5;}
         
-        /* إضاءة المساعد (متناسقة مع الثيم) */
-        .glow { box-shadow: inset 0 0 0 5px var(--helper-glow) !important; z-index: 5;}
+        /* --- المساعد السريع والأنيق (إطار أحمر حاد كالإصدار القديم) --- */
+        .glow { box-shadow: inset 0 0 0 4px #ef4444 !important; z-index: 5;}
 
         /* العدادات */
         .stats-container { display: flex; justify-content: space-between; width: 100%; margin-top: 15px; gap: 10px; }
@@ -115,7 +110,7 @@
             <div class="pill-btn" onclick="toggleFlip()" data-i18n="optFlip">تدوير</div>
         </div>
 
-        <!-- الرقعة وبداخلها الهدف المفرغ (بدون صندوق) -->
+        <!-- الرقعة وبداخلها الهدف بستايل Lichess -->
         <div class="board-wrapper">
             <div id="board"></div>
             <div id="target-overlay">--</div>
@@ -151,7 +146,6 @@
     </div>
 
     <script>
-        // --- الترجمة ---
         const dictionary = {
             ar: { title: "الإحداثيات", themeRoyal: "ملكي", themeModern: "داكن", themeClassic: "كلاسيك", opt30: "30 ثانية", optInf: "مفتوح", optHelp: "المساعد", optFlip: "تدوير", statScore: "النقاط", statTime: "الوقت", btnStart: "إبدأ التحدي", btnEnd: "إنهاء التحدي", modalTitle: "انتهى الوقت", modalDesc: "الإحداثيات الصحيحة:", modalBtn: "استمرار" },
             en: { title: "Coordinates", themeRoyal: "Royal", themeModern: "Dark", themeClassic: "Classic", opt30: "30 Sec", optInf: "Infinite", optHelp: "Helper", optFlip: "Flip", statScore: "Score", statTime: "Time", btnStart: "Start Training", btnEnd: "End Training", modalTitle: "Time's Up", modalDesc: "Correct Coordinates:", modalBtn: "Continue" }
@@ -166,12 +160,10 @@
         }
         function toggleLanguage() { applyLanguage(currentLang === 'ar' ? 'en' : 'ar'); }
 
-        // --- الثيمات ---
         const savedTheme = localStorage.getItem('chessTheme') || 'royal';
         document.body.className = 'theme-' + savedTheme; document.getElementById('themeChoice').value = savedTheme;
         function changeTheme(theme) { document.body.className = 'theme-' + theme; localStorage.setItem('chessTheme', theme); }
 
-        // --- متغيرات اللعبة ---
         let score = 0, selectedTime = 30, timeLeft = 30;
         let currentTarget = "", gameActive = false, timerInterval;
         let isFlipped = false, isHelperActive = false, board = null;
@@ -185,7 +177,6 @@
         const optionsGrid = document.getElementById('time-options');
         const endModal = document.getElementById('endModal');
 
-        // --- تهيئة الرقعة ---
         $(document).ready(function() {
             applyLanguage(currentLang);
             var config = { position: 'start', showNotation: true, pieceTheme: function(piece) { return 'https://images.chesscomfiles.com/chess-themes/pieces/light/150/' + piece.toLowerCase() + '.png'; } };
@@ -197,13 +188,11 @@
             });
         });
 
-        // --- الدوال (إصلاح المساعد) ---
         function toggleHelper() { 
             isHelperActive = !isHelperActive; 
             if(isHelperActive) helperBtn.classList.add('selected'); else helperBtn.classList.remove('selected'); 
             applyHelperGlow(); 
         }
-        
         function toggleFlip() { if (gameActive) return; isFlipped = !isFlipped; board.orientation(isFlipped ? 'black' : 'white'); applyHelperGlow(); }
         
         function selectTime(seconds, btn) {
@@ -213,24 +202,17 @@
             btn.classList.add('selected'); timerEl.innerText = seconds === 0 ? "∞" : seconds;
         }
 
-        function clearBoardHighlights() { 
-            // نمسح الألوان الصح والخطأ فقط ولا نتدخل في المساعد أبداً
-            $('#board .square-55d63').removeClass('correct wrong'); 
-        }
-        
+        function clearBoardHighlights() { $('#board .square-55d63').removeClass('correct wrong'); }
         function applyHelperGlow() { 
-            // المساعد يتحكم بخصائصه فقط
             $('#board .square-55d63').removeClass('glow'); 
-            if (isHelperActive && gameActive && currentTarget) { 
-                $('#board .square-' + currentTarget).addClass('glow'); 
-            } 
+            if (isHelperActive && gameActive && currentTarget) { $('#board .square-' + currentTarget).addClass('glow'); } 
         }
 
         function nextSquare() {
             const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
             currentTarget = files[Math.floor(Math.random() * 8)] + (Math.floor(Math.random() * 8) + 1);
             targetOverlay.innerText = currentTarget; 
-            applyHelperGlow(); // تحديث المساعد فوراً مع كل مربع جديد
+            applyHelperGlow();
         }
 
         function handleSquareClick(squareName, squareElement) {
@@ -238,7 +220,7 @@
             if (squareName === currentTarget) {
                 score++; scoreEl.innerText = score;
                 squareElement.addClass('correct');
-                nextSquare(); // يتغير فوراً
+                nextSquare(); 
                 setTimeout(() => squareElement.removeClass('correct'), 150); 
             } else {
                 squareElement.addClass('wrong');
@@ -263,8 +245,7 @@
         function endGame() {
             if (!gameActive) return; gameActive = false; clearInterval(timerInterval);
             targetOverlay.style.display = 'none'; 
-            clearBoardHighlights();
-            $('#board .square-55d63').removeClass('glow'); // مسح المساعد عند النهاية
+            clearBoardHighlights(); $('#board .square-55d63').removeClass('glow'); 
             endBtn.style.display = 'none'; 
             document.getElementById('finalScoreText').innerText = score; endModal.style.display = 'flex';
         }
