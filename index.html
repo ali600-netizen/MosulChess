@@ -8,72 +8,64 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Tajawal:wght@500;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Tajawal:wght@500;700;800;900&display=swap" rel="stylesheet">
     
     <style>
-        /* --- متغيرات الألوان المتطابقة مع غرف اللعب --- */
+        /* متغيرات الألوان المتطابقة مع غرف اللعب */
         body.theme-royal { --bg-color: #D2D2D6; --panel-bg: #F4F1EA; --border-color: #C9A86A; --text-main: #0B174D; --text-muted: #2C447F; --board-light: #F4F1EA; --board-dark: #1A2E73; --primary-color: #0B174D; --primary-hover: #1A2E73; --danger-color: #A8834C; --timer-bg: #F4F1EA; --timer-border: #C9A86A; }
         body.theme-modern { --bg-color: #0f172a; --panel-bg: #1e293b; --border-color: #334155; --text-main: #f8fafc; --text-muted: #94a3b8; --board-light: #cbd5e1; --board-dark: #475569; --primary-color: #3b82f6; --primary-hover: #2563eb; --danger-color: #ef4444; --timer-bg: #0f172a; --timer-border: #334155; }
         body.theme-classic { --bg-color: #ebecd0; --panel-bg: #ffffff; --border-color: #dcdcdc; --text-main: #2b2b2b; --text-muted: #737373; --board-light: #ebecd0; --board-dark: #739552; --primary-color: #81b64c; --primary-hover: #6a9c3d; --danger-color: #fa4b4b; --timer-bg: #f8f8f8; --timer-border: #cccccc; }
 
         * { box-sizing: border-box; font-family: 'Tajawal', 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; user-select: none; transition: all 0.4s ease; }
-        
-        /* تكبير الواجهة بشكل متناسق */
+        /* تقليل الهوامش لتكبير حجم التطبيق */
+        body { background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 8px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; user-select: none; transition: background-color 0.3s ease; }
         .container { width: 100%; max-width: 600px; display: flex; flex-direction: column; align-items: center; }
 
-        /* الشريط العلوي الدائري */
-        .top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 20px; background: var(--panel-bg); padding: 12px 20px; border-radius: 20px; border: 2px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .top-bar h2 { margin: 0; font-weight: 900; font-size: 1.4rem; color: var(--text-main); }
-        .header-controls { display: flex; gap: 10px; }
-        select.modern-select, button.lang-btn { background: var(--bg-color); color: var(--text-main); border: 2px solid var(--border-color); border-radius: 12px; padding: 6px 12px; font-weight: 800; outline: none; cursor: pointer; transition: 0.2s; font-size: 0.95rem; }
-        button.lang-btn:active { transform: scale(0.95); }
+        /* الشريط العلوي مصغر لتوفير المساحة */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 12px; background: var(--panel-bg); padding: 8px 15px; border-radius: 12px; border: 2px solid var(--border-color); }
+        .top-bar h2 { margin: 0; font-weight: 900; font-size: 1.2rem; color: var(--text-main); }
+        .header-controls { display: flex; gap: 8px; }
+        select.modern-select, button.lang-btn { background: var(--bg-color); color: var(--text-main); border: 2px solid var(--border-color); border-radius: 8px; padding: 5px 10px; font-weight: 800; outline: none; cursor: pointer; font-size: 0.9rem; }
 
-        /* كبسولات الخيارات الناعمة */
-        .pills-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; width: 100%; margin-bottom: 20px; }
-        .pill-btn { background: var(--panel-bg); color: var(--text-muted); border: 2px solid var(--border-color); padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: 800; font-size: 1rem; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; flex: 1; min-width: 80px; }
-        .pill-btn.selected { background: var(--primary-color); color: #ffffff; border-color: var(--primary-color); box-shadow: 0 8px 15px rgba(0,0,0,0.15); transform: translateY(-2px); }
+        /* كبسولات الخيارات العلوية */
+        .pills-container { display: flex; justify-content: space-between; width: 100%; gap: 8px; margin-bottom: 5px; }
+        .pill-btn { background: var(--panel-bg); color: var(--text-muted); border: 2px solid var(--border-color); padding: 8px 5px; border-radius: 20px; cursor: pointer; font-weight: 800; font-size: 0.9rem; text-align: center; flex: 1; transition: 0.1s; }
+        .pill-btn.selected { background: var(--primary-color); color: #ffffff; border-color: var(--primary-color); }
 
-        /* الرقعة: ناعمة الزوايا وأكبر حجماً */
-        .board-wrapper { width: 100% !important; max-width: 600px; aspect-ratio: 1 / 1; margin: 0 auto; border-radius: 24px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.2); position: relative; border: 4px solid var(--border-color); touch-action: none !important; transform: translateZ(0); }
+        /* عرض الإحداثية بشكل ضخم أعلى الرقعة (خارجها) */
+        .target-display { font-size: 4.5rem; font-weight: 900; color: var(--primary-color); text-align: center; font-family: 'Inter', monospace; margin: 5px 0 10px 0; letter-spacing: 2px; line-height: 1; text-transform: lowercase; min-height: 75px; text-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        /* الرقعة: أكبر حجم ممكن، حواف شبه مربعة */
+        .board-wrapper { width: 100% !important; aspect-ratio: 1 / 1; margin: 0 auto; border-radius: 6px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.2); position: relative; border: 2px solid var(--border-color); touch-action: none !important; }
         #board { width: 100% !important; }
         .white-1e1d7 { background-color: var(--board-light) !important; color: var(--board-dark) !important; }
         .black-3c85d { background-color: var(--board-dark) !important; color: var(--board-light) !important; }
 
-        /* صندوق الإحداثية الزجاجي (يمنع الاهتزاز) */
-        #target-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 180px; height: 110px; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 30px; display: flex; justify-content: center; align-items: center; font-size: 4.5rem; font-weight: 900; color: #ffffff; pointer-events: none; opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease; z-index: 10; border: 2px solid rgba(255,255,255,0.2); font-family: 'Inter', monospace; letter-spacing: 2px; }
-        #target-overlay.active { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-
-        /* تأثيرات النقر الفورية */
+        /* ألوان النقر (بدون أنيميشن لتسريع الاستجابة) */
         .correct { background-color: rgba(74, 222, 128, 0.85) !important; }
         .wrong { background-color: rgba(239, 68, 68, 0.85) !important; }
         .glow { box-shadow: inset 0 0 0 5px rgba(234, 179, 8, 0.9) !important; }
 
-        /* العدادات الدائرية الأنيقة */
-        .stats-container { display: flex; justify-content: space-between; width: 100%; margin-top: 25px; gap: 15px; }
-        .stat-box { flex: 1; background: var(--timer-bg); border: 2px solid var(--timer-border); border-radius: 20px; padding: 20px 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .stat-label { color: var(--text-muted); font-size: 1rem; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; }
-        .stat-value { font-family: 'Inter', monospace; font-size: 2.5rem; color: var(--text-main); font-weight: 900; line-height: 1; }
+        /* العدادات السفلية */
+        .stats-container { display: flex; justify-content: space-between; width: 100%; margin-top: 15px; gap: 10px; }
+        .stat-box { flex: 1; background: var(--timer-bg); border: 2px solid var(--timer-border); border-radius: 12px; padding: 12px; text-align: center; }
+        .stat-label { color: var(--text-muted); font-size: 0.9rem; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; }
+        .stat-value { font-family: 'Inter', monospace; font-size: 2.2rem; color: var(--text-main); font-weight: 900; line-height: 1; }
 
-        /* الأزرار الرئيسية الضخمة والناعمة */
-        .controls-container { width: 100%; margin-top: 25px; }
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 20px; font-size: 1.4rem; font-weight: 900; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); display: flex; justify-content: center; align-items: center; }
-        .btn-primary { background: var(--primary-color); color: #ffffff; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
-        .btn-primary:active { transform: scale(0.96); }
+        /* الأزرار الرئيسية */
+        .controls-container { width: 100%; margin-top: 15px; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 1.2rem; font-weight: 900; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        .btn-primary { background: var(--primary-color); color: #ffffff; }
         .btn-danger { background: var(--danger-color); color: #ffffff; display: none; }
-        .btn-danger:active { transform: scale(0.96); }
 
-        /* النافذة المنبثقة الناعمة */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 200; backdrop-filter: blur(6px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .modal-overlay.show { opacity: 1; pointer-events: auto; }
-        .modal-content { background: var(--panel-bg); border: 2px solid var(--border-color); border-radius: 24px; padding: 40px 30px; text-align: center; width: 90%; max-width: 350px; box-shadow: 0 25px 50px rgba(0,0,0,0.4); transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .modal-overlay.show .modal-content { transform: translateY(0); }
-        .modal-content h2 { margin: 0 0 10px 0; font-size: 2.2rem; font-weight: 900; color: var(--text-main); }
-        .modal-content .final-score { font-size: 4.5rem; font-weight: 900; color: var(--primary-color); font-family: 'Inter', monospace; margin: 15px 0; line-height: 1; }
-        .modal-content p { color: var(--text-muted); font-weight: 700; margin-bottom: 25px; font-size: 1.2rem; }
+        /* النافذة المنبثقة للنهاية */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 200; backdrop-filter: blur(4px); }
+        .modal-content { background: var(--panel-bg); border: 2px solid var(--border-color); border-radius: 16px; padding: 30px; text-align: center; width: 90%; max-width: 320px; box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
+        .modal-content h2 { margin: 0 0 10px 0; font-size: 1.8rem; font-weight: 900; color: var(--text-main); }
+        .modal-content .final-score { font-size: 3.5rem; font-weight: 900; color: var(--primary-color); font-family: 'Inter', monospace; margin: 15px 0; line-height: 1; }
+        .modal-content p { color: var(--text-muted); font-weight: 700; margin-bottom: 20px; font-size: 1rem; }
 
-        /* اتجاهات اللغات */
         html[dir="ltr"] .stat-label, html[dir="ltr"] .pill-btn, html[dir="ltr"] .btn, html[dir="ltr"] h2, html[dir="ltr"] p { font-family: 'Inter', sans-serif; }
     </style>
 </head>
@@ -99,9 +91,11 @@
             <div class="pill-btn" onclick="toggleFlip()" data-i18n="optFlip">تدوير</div>
         </div>
 
+        <div class="target-display" id="target-display">--</div>
+
         <div class="board-wrapper">
             <div id="board"></div>
-            <div id="target-overlay"></div> </div>
+        </div>
 
         <div class="stats-container">
             <div class="stat-box">
@@ -130,61 +124,32 @@
     </div>
 
     <script>
-        // --- نظام الترجمة المدمج ---
+        // --- الترجمة ---
         const dictionary = {
-            ar: {
-                title: "الإحداثيات", themeRoyal: "ملكي", themeModern: "داكن", themeClassic: "كلاسيك",
-                opt30: "30 ثانية", optInf: "مفتوح", optHelp: "المساعد", optFlip: "تدوير",
-                statScore: "النقاط", statTime: "الوقت", btnStart: "إبدأ التحدي", btnEnd: "إنهاء التحدي",
-                modalTitle: "انتهى الوقت", modalDesc: "الإحداثيات الصحيحة:", modalBtn: "استمرار"
-            },
-            en: {
-                title: "Coordinates", themeRoyal: "Royal", themeModern: "Dark", themeClassic: "Classic",
-                opt30: "30 Sec", optInf: "Infinite", optHelp: "Helper", optFlip: "Flip",
-                statScore: "Score", statTime: "Time", btnStart: "Start Training", btnEnd: "End Training",
-                modalTitle: "Time's Up", modalDesc: "Correct Coordinates:", modalBtn: "Continue"
-            }
+            ar: { title: "الإحداثيات", themeRoyal: "ملكي", themeModern: "داكن", themeClassic: "كلاسيك", opt30: "30 ثانية", optInf: "مفتوح", optHelp: "المساعد", optFlip: "تدوير", statScore: "النقاط", statTime: "الوقت", btnStart: "إبدأ التحدي", btnEnd: "إنهاء التحدي", modalTitle: "انتهى الوقت", modalDesc: "الإحداثيات الصحيحة:", modalBtn: "استمرار" },
+            en: { title: "Coordinates", themeRoyal: "Royal", themeModern: "Dark", themeClassic: "Classic", opt30: "30 Sec", optInf: "Infinite", optHelp: "Helper", optFlip: "Flip", statScore: "Score", statTime: "Time", btnStart: "Start Training", btnEnd: "End Training", modalTitle: "Time's Up", modalDesc: "Correct Coordinates:", modalBtn: "Continue" }
         };
 
         let currentLang = localStorage.getItem('chessLang') || 'ar';
-        
         function applyLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('chessLang', lang);
-            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-            document.documentElement.lang = lang;
+            currentLang = lang; localStorage.setItem('chessLang', lang);
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'; document.documentElement.lang = lang;
             document.getElementById('langBtn').innerText = lang === 'ar' ? 'EN' : 'عربي';
-            
-            $('[data-i18n]').each(function() {
-                let key = $(this).attr('data-i18n');
-                if (dictionary[lang][key]) {
-                    if ($(this).is('option')) $(this).text(dictionary[lang][key]);
-                    else $(this).text(dictionary[lang][key]);
-                }
-            });
+            $('[data-i18n]').each(function() { let key = $(this).attr('data-i18n'); if (dictionary[lang][key]) { if ($(this).is('option')) $(this).text(dictionary[lang][key]); else $(this).text(dictionary[lang][key]); } });
         }
+        function toggleLanguage() { applyLanguage(currentLang === 'ar' ? 'en' : 'ar'); }
 
-        function toggleLanguage() {
-            applyLanguage(currentLang === 'ar' ? 'en' : 'ar');
-        }
-
-        // --- نظام الثيمات ---
+        // --- الثيمات ---
         const savedTheme = localStorage.getItem('chessTheme') || 'royal';
-        document.body.className = 'theme-' + savedTheme;
-        document.getElementById('themeChoice').value = savedTheme;
-
-        function changeTheme(theme) {
-            document.body.className = 'theme-' + theme;
-            localStorage.setItem('chessTheme', theme);
-        }
+        document.body.className = 'theme-' + savedTheme; document.getElementById('themeChoice').value = savedTheme;
+        function changeTheme(theme) { document.body.className = 'theme-' + theme; localStorage.setItem('chessTheme', theme); }
 
         // --- متغيرات اللعبة ---
         let score = 0, selectedTime = 30, timeLeft = 30;
         let currentTarget = "", gameActive = false, timerInterval;
-        let isFlipped = false, isHelperActive = false;
-        let board = null;
+        let isFlipped = false, isHelperActive = false, board = null;
 
-        const targetOverlay = document.getElementById('target-overlay');
+        const targetDisplay = document.getElementById('target-display');
         const scoreEl = document.getElementById('score');
         const timerEl = document.getElementById('timer');
         const startBtn = document.getElementById('start-btn');
@@ -192,82 +157,51 @@
         const helperBtn = document.getElementById('helper-btn');
         const optionsGrid = document.getElementById('time-options');
         const endModal = document.getElementById('endModal');
-        const finalScoreText = document.getElementById('finalScoreText');
 
         // --- تهيئة الرقعة ---
         $(document).ready(function() {
             applyLanguage(currentLang);
-            var config = {
-                position: 'start',
-                showNotation: true,
-                pieceTheme: function(piece) { return 'https://images.chesscomfiles.com/chess-themes/pieces/light/150/' + piece.toLowerCase() + '.png'; }
-            };
-            board = Chessboard('board', config);
-            $(window).resize(board.resize);
+            var config = { position: 'start', showNotation: true, pieceTheme: function(piece) { return 'https://images.chesscomfiles.com/chess-themes/pieces/light/150/' + piece.toLowerCase() + '.png'; } };
+            board = Chessboard('board', config); $(window).resize(board.resize);
             
-            // محرك اللمس السريع
+            // التقاط النقرات (Touch & Click)
             $(document).on('mousedown touchstart', '#board .square-55d63', function(e) {
-                e.preventDefault();
-                if (!gameActive) return;
-                let square = $(this).attr('data-square');
-                handleSquareClick(square, $(this));
+                e.preventDefault(); if (!gameActive) return;
+                handleSquareClick($(this).attr('data-square'), $(this));
             });
         });
 
-        // --- دوال الأزرار ---
-        function toggleHelper() {
-            isHelperActive = !isHelperActive;
-            if(isHelperActive) helperBtn.classList.add('selected');
-            else helperBtn.classList.remove('selected');
-            applyHelperGlow();
-        }
-
-        function toggleFlip() {
-            if (gameActive) return; 
-            isFlipped = !isFlipped;
-            board.orientation(isFlipped ? 'black' : 'white');
-            applyHelperGlow();
-        }
-
+        // --- الدوال ---
+        function toggleHelper() { isHelperActive = !isHelperActive; if(isHelperActive) helperBtn.classList.add('selected'); else helperBtn.classList.remove('selected'); applyHelperGlow(); }
+        function toggleFlip() { if (gameActive) return; isFlipped = !isFlipped; board.orientation(isFlipped ? 'black' : 'white'); applyHelperGlow(); }
+        
         function selectTime(seconds, btn) {
             if (gameActive) return;
             selectedTime = seconds; timeLeft = seconds;
-            optionsGrid.children[0].classList.remove('selected');
-            optionsGrid.children[1].classList.remove('selected');
-            btn.classList.add('selected');
-            timerEl.innerText = seconds === 0 ? "∞" : seconds;
+            optionsGrid.children[0].classList.remove('selected'); optionsGrid.children[1].classList.remove('selected');
+            btn.classList.add('selected'); timerEl.innerText = seconds === 0 ? "∞" : seconds;
         }
 
-        function clearBoardHighlights() {
-            $('#board .square-55d63').removeClass('glow correct wrong');
-        }
-
-        function applyHelperGlow() {
-            clearBoardHighlights();
-            if (isHelperActive && gameActive && currentTarget) {
-                $('#board .square-' + currentTarget).addClass('glow');
-            }
-        }
+        function clearBoardHighlights() { $('#board .square-55d63').removeClass('glow correct wrong'); }
+        function applyHelperGlow() { clearBoardHighlights(); if (isHelperActive && gameActive && currentTarget) { $('#board .square-' + currentTarget).addClass('glow'); } }
 
         function nextSquare() {
             const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-            const randomFile = files[Math.floor(Math.random() * 8)];
-            const randomRank = Math.floor(Math.random() * 8) + 1;
-            currentTarget = randomFile + randomRank;
-            
-            targetOverlay.innerText = currentTarget;
+            currentTarget = files[Math.floor(Math.random() * 8)] + (Math.floor(Math.random() * 8) + 1);
+            targetDisplay.innerText = currentTarget; // تحديث النص فوراً
             applyHelperGlow();
         }
 
         function handleSquareClick(squareName, squareElement) {
+            clearBoardHighlights();
             if (squareName === currentTarget) {
                 score++; scoreEl.innerText = score;
-                clearBoardHighlights();
                 squareElement.addClass('correct');
-                setTimeout(() => { squareElement.removeClass('correct'); nextSquare(); }, 100); 
+                nextSquare(); // ينتقل للرقم التالي فوراً 0 ملي ثانية تأخير
+                setTimeout(() => squareElement.removeClass('correct'), 150); // يمسح اللون الأخضر لاحقاً
             } else {
                 squareElement.addClass('wrong');
-                setTimeout(() => squareElement.removeClass('wrong'), 200);
+                setTimeout(() => squareElement.removeClass('wrong'), 150);
             }
         }
 
@@ -275,34 +209,23 @@
             gameActive = true; score = 0; timeLeft = selectedTime; scoreEl.innerText = score;
             startBtn.style.display = 'none'; endBtn.style.display = 'flex'; 
             optionsGrid.style.opacity = '0.4'; optionsGrid.style.pointerEvents = 'none';
-            targetOverlay.classList.add('active'); // إظهار الصندوق الزجاجي
-            
             board.position('start', false);
             nextSquare();
 
             if (selectedTime > 0) {
-                timerInterval = setInterval(() => {
-                    timeLeft--; timerEl.innerText = timeLeft;
-                    if (timeLeft <= 0) endGame();
-                }, 1000);
+                timerInterval = setInterval(() => { timeLeft--; timerEl.innerText = timeLeft; if (timeLeft <= 0) endGame(); }, 1000);
             } else { timerEl.innerText = "∞"; }
         }
 
         function endGame() {
-            if (!gameActive) return; 
-            gameActive = false; clearInterval(timerInterval);
-            targetOverlay.classList.remove('active'); // إخفاء الصندوق الزجاجي
-            clearBoardHighlights();
+            if (!gameActive) return; gameActive = false; clearInterval(timerInterval);
+            targetDisplay.innerText = "--"; clearBoardHighlights();
             endBtn.style.display = 'none'; 
-            
-            // إظهار النافذة المنبثقة
-            finalScoreText.innerText = score;
-            endModal.classList.add('show');
+            document.getElementById('finalScoreText').innerText = score; endModal.style.display = 'flex';
         }
 
         function closeModalAndReset() {
-            endModal.classList.remove('show');
-            startBtn.style.display = 'flex'; 
+            endModal.style.display = 'none'; startBtn.style.display = 'flex'; 
             optionsGrid.style.opacity = '1'; optionsGrid.style.pointerEvents = 'auto';
             if(selectedTime > 0) timerEl.innerText = selectedTime;
         }
