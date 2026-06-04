@@ -8,115 +8,167 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Tajawal:wght@500;700;800;900&display=swap" rel="stylesheet">
     
     <style>
-        /* متغيرات الألوان المتطابقة مع موقع اللعب */
+        /* --- متغيرات الألوان المتطابقة مع غرف اللعب --- */
         body.theme-royal { --bg-color: #D2D2D6; --panel-bg: #F4F1EA; --border-color: #C9A86A; --text-main: #0B174D; --text-muted: #2C447F; --board-light: #F4F1EA; --board-dark: #1A2E73; --primary-color: #0B174D; --primary-hover: #1A2E73; --danger-color: #A8834C; --timer-bg: #F4F1EA; --timer-border: #C9A86A; }
         body.theme-modern { --bg-color: #0f172a; --panel-bg: #1e293b; --border-color: #334155; --text-main: #f8fafc; --text-muted: #94a3b8; --board-light: #cbd5e1; --board-dark: #475569; --primary-color: #3b82f6; --primary-hover: #2563eb; --danger-color: #ef4444; --timer-bg: #0f172a; --timer-border: #334155; }
         body.theme-classic { --bg-color: #ebecd0; --panel-bg: #ffffff; --border-color: #dcdcdc; --text-main: #2b2b2b; --text-muted: #737373; --board-light: #ebecd0; --board-dark: #739552; --primary-color: #81b64c; --primary-hover: #6a9c3d; --danger-color: #fa4b4b; --timer-bg: #f8f8f8; --timer-border: #cccccc; }
 
-        * { box-sizing: border-box; font-family: 'Inter', 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow: hidden; user-select: none; transition: background-color 0.4s ease, color 0.4s ease; }
-        .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; align-items: center; }
+        * { box-sizing: border-box; font-family: 'Tajawal', 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; user-select: none; transition: all 0.4s ease; }
+        
+        /* تكبير الواجهة بشكل متناسق */
+        .container { width: 100%; max-width: 600px; display: flex; flex-direction: column; align-items: center; }
 
-        /* الشريط العلوي */
-        .top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 20px; }
-        .top-bar h2 { margin: 0; font-weight: 900; font-size: 1.5rem; color: var(--text-main); }
-        select.theme-select { background: var(--panel-bg); color: var(--text-main); border: 2px solid var(--border-color); border-radius: 8px; padding: 8px 12px; font-weight: 700; outline: none; cursor: pointer; }
+        /* الشريط العلوي الدائري */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 20px; background: var(--panel-bg); padding: 12px 20px; border-radius: 20px; border: 2px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .top-bar h2 { margin: 0; font-weight: 900; font-size: 1.4rem; color: var(--text-main); }
+        .header-controls { display: flex; gap: 10px; }
+        select.modern-select, button.lang-btn { background: var(--bg-color); color: var(--text-main); border: 2px solid var(--border-color); border-radius: 12px; padding: 6px 12px; font-weight: 800; outline: none; cursor: pointer; transition: 0.2s; font-size: 0.95rem; }
+        button.lang-btn:active { transform: scale(0.95); }
 
-        /* أزرار الإعدادات */
-        .options-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; margin-bottom: 20px; }
-        .option-btn { background: var(--panel-bg); color: var(--text-muted); border: 2px solid var(--border-color); padding: 10px 5px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.9rem; transition: all 0.2s ease; text-align: center; }
-        .option-btn.selected { background: var(--primary-color); color: #ffffff; border-color: var(--primary-color); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        /* كبسولات الخيارات الناعمة */
+        .pills-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; width: 100%; margin-bottom: 20px; }
+        .pill-btn { background: var(--panel-bg); color: var(--text-muted); border: 2px solid var(--border-color); padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: 800; font-size: 1rem; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; flex: 1; min-width: 80px; }
+        .pill-btn.selected { background: var(--primary-color); color: #ffffff; border-color: var(--primary-color); box-shadow: 0 8px 15px rgba(0,0,0,0.15); transform: translateY(-2px); }
 
-        /* الرقعة المحمية من التشوه */
-        .board-wrapper { width: 100% !important; max-width: 500px; aspect-ratio: 1 / 1; margin: 0 auto; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; border: 3px solid var(--border-color); touch-action: none !important; }
+        /* الرقعة: ناعمة الزوايا وأكبر حجماً */
+        .board-wrapper { width: 100% !important; max-width: 600px; aspect-ratio: 1 / 1; margin: 0 auto; border-radius: 24px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.2); position: relative; border: 4px solid var(--border-color); touch-action: none !important; transform: translateZ(0); }
         #board { width: 100% !important; }
         .white-1e1d7 { background-color: var(--board-light) !important; color: var(--board-dark) !important; }
         .black-3c85d { background-color: var(--board-dark) !important; color: var(--board-light) !important; }
 
-        /* الألوان التفاعلية للمربعات */
+        /* صندوق الإحداثية الزجاجي (يمنع الاهتزاز) */
+        #target-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 180px; height: 110px; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 30px; display: flex; justify-content: center; align-items: center; font-size: 4.5rem; font-weight: 900; color: #ffffff; pointer-events: none; opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease; z-index: 10; border: 2px solid rgba(255,255,255,0.2); font-family: 'Inter', monospace; letter-spacing: 2px; }
+        #target-overlay.active { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+
+        /* تأثيرات النقر الفورية */
         .correct { background-color: rgba(74, 222, 128, 0.85) !important; }
         .wrong { background-color: rgba(239, 68, 68, 0.85) !important; }
-        .glow { box-shadow: inset 0 0 0 4px rgba(234, 179, 8, 0.8) !important; }
+        .glow { box-shadow: inset 0 0 0 5px rgba(234, 179, 8, 0.9) !important; }
 
-        /* إحداثية الهدف (مستقرة ولا تهتز) */
-        #target-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 7rem; font-weight: 900; color: #ffffff; text-shadow: 0px 5px 20px rgba(0,0,0,0.8); pointer-events: none; font-family: 'Inter', sans-serif; opacity: 0; transition: opacity 0.1s; letter-spacing: -2px; z-index: 10; line-height: 1; }
+        /* العدادات الدائرية الأنيقة */
+        .stats-container { display: flex; justify-content: space-between; width: 100%; margin-top: 25px; gap: 15px; }
+        .stat-box { flex: 1; background: var(--timer-bg); border: 2px solid var(--timer-border); border-radius: 20px; padding: 20px 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .stat-label { color: var(--text-muted); font-size: 1rem; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; }
+        .stat-value { font-family: 'Inter', monospace; font-size: 2.5rem; color: var(--text-main); font-weight: 900; line-height: 1; }
 
-        /* العدادات (نفس تصميم المؤقت في الموقع الأول) */
-        .stats-container { display: flex; justify-content: space-between; width: 100%; margin-top: 20px; gap: 15px; }
-        .stat-box { flex: 1; background: var(--timer-bg); border: 2px solid var(--timer-border); border-radius: 12px; padding: 15px; text-align: center; }
-        .stat-label { color: var(--text-muted); font-size: 1rem; font-weight: 800; margin-bottom: 5px; }
-        .stat-value { font-family: 'Inter', monospace; font-size: 2.2rem; color: var(--text-main); font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; } /* tabular-nums تمنع اهتزاز الأرقام */
-
-        /* الأزرار الرئيسية */
-        .controls-container { width: 100%; margin-top: 20px; }
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 1.2rem; font-weight: 900; cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; }
-        .btn-primary { background: var(--primary-color); color: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        /* الأزرار الرئيسية الضخمة والناعمة */
+        .controls-container { width: 100%; margin-top: 25px; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 20px; font-size: 1.4rem; font-weight: 900; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); display: flex; justify-content: center; align-items: center; }
+        .btn-primary { background: var(--primary-color); color: #ffffff; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .btn-primary:active { transform: scale(0.96); }
         .btn-danger { background: var(--danger-color); color: #ffffff; display: none; }
+        .btn-danger:active { transform: scale(0.96); }
 
-        /* الواجهة المنبثقة الأنيقة لنهاية اللعبة (بديل Alert) */
-        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 200; backdrop-filter: blur(5px); display: none; }
-        .modal-content { background: var(--panel-bg); border: 2px solid var(--border-color); border-radius: 16px; padding: 30px; text-align: center; width: 90%; max-width: 320px; box-shadow: 0 25px 50px rgba(0,0,0,0.4); }
-        .modal-content h2 { margin: 0 0 10px 0; font-size: 2rem; font-weight: 900; color: var(--text-main); }
-        .modal-content .final-score { font-size: 3.5rem; font-weight: 900; color: var(--primary-color); font-family: 'Inter', sans-serif; margin: 15px 0; line-height: 1; }
-        .modal-content p { color: var(--text-muted); font-weight: 700; margin-bottom: 20px; font-size: 1.1rem; }
+        /* النافذة المنبثقة الناعمة */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 200; backdrop-filter: blur(6px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-content { background: var(--panel-bg); border: 2px solid var(--border-color); border-radius: 24px; padding: 40px 30px; text-align: center; width: 90%; max-width: 350px; box-shadow: 0 25px 50px rgba(0,0,0,0.4); transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .modal-overlay.show .modal-content { transform: translateY(0); }
+        .modal-content h2 { margin: 0 0 10px 0; font-size: 2.2rem; font-weight: 900; color: var(--text-main); }
+        .modal-content .final-score { font-size: 4.5rem; font-weight: 900; color: var(--primary-color); font-family: 'Inter', monospace; margin: 15px 0; line-height: 1; }
+        .modal-content p { color: var(--text-muted); font-weight: 700; margin-bottom: 25px; font-size: 1.2rem; }
+
+        /* اتجاهات اللغات */
+        html[dir="ltr"] .stat-label, html[dir="ltr"] .pill-btn, html[dir="ltr"] .btn, html[dir="ltr"] h2, html[dir="ltr"] p { font-family: 'Inter', sans-serif; }
     </style>
 </head>
 <body class="theme-royal">
 
     <div class="container">
         <div class="top-bar">
-            <h2>الإحداثيات</h2>
-            <select class="theme-select" id="themeChoice" onchange="changeTheme(this.value)">
-                <option value="royal">ملكي</option>
-                <option value="modern">داكن</option>
-                <option value="classic">كلاسيك</option>
-            </select>
+            <h2 data-i18n="title">الإحداثيات</h2>
+            <div class="header-controls">
+                <select class="modern-select" id="themeChoice" onchange="changeTheme(this.value)">
+                    <option value="royal" data-i18n="themeRoyal">ملكي</option>
+                    <option value="modern" data-i18n="themeModern">داكن</option>
+                    <option value="classic" data-i18n="themeClassic">كلاسيك</option>
+                </select>
+                <button class="lang-btn" onclick="toggleLanguage()" id="langBtn">EN</button>
+            </div>
         </div>
 
-        <div class="options-grid" id="time-options">
-            <div class="option-btn selected" onclick="selectTime(30, this)">30 ثانية</div>
-            <div class="option-btn" onclick="selectTime(0, this)">مفتوح</div>
-            <div class="option-btn" id="helper-btn" onclick="toggleHelper()">المساعد</div>
-            <div class="option-btn" onclick="toggleFlip()">قلب</div>
+        <div class="pills-container" id="time-options">
+            <div class="pill-btn selected" onclick="selectTime(30, this)" data-i18n="opt30">30 ثانية</div>
+            <div class="pill-btn" onclick="selectTime(0, this)" data-i18n="optInf">مفتوح</div>
+            <div class="pill-btn" id="helper-btn" onclick="toggleHelper()" data-i18n="optHelp">المساعد</div>
+            <div class="pill-btn" onclick="toggleFlip()" data-i18n="optFlip">تدوير</div>
         </div>
 
         <div class="board-wrapper">
             <div id="board"></div>
-            <div id="target-overlay"></div>
-        </div>
+            <div id="target-overlay"></div> </div>
 
         <div class="stats-container">
             <div class="stat-box">
-                <div class="stat-label">النقاط</div>
+                <div class="stat-label" data-i18n="statScore">النقاط</div>
                 <div class="stat-value" id="score">0</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">الوقت</div>
+                <div class="stat-label" data-i18n="statTime">الوقت</div>
                 <div class="stat-value" id="timer">30</div>
             </div>
         </div>
 
         <div class="controls-container">
-            <button class="btn btn-primary" id="start-btn" onclick="startGame()">إبدأ التحدي</button>
-            <button class="btn btn-danger" id="end-btn" onclick="endGame()">إنهاء التحدي</button>
+            <button class="btn btn-primary" id="start-btn" onclick="startGame()" data-i18n="btnStart">إبدأ التحدي</button>
+            <button class="btn btn-danger" id="end-btn" onclick="endGame()" data-i18n="btnEnd">إنهاء التحدي</button>
         </div>
     </div>
 
-    <!-- نافذة النهاية الحديثة -->
     <div class="modal-overlay" id="endModal">
         <div class="modal-content">
-            <h2>انتهى الوقت</h2>
-            <p>لقد قمت بتحديد الإحداثيات الصحيحة:</p>
+            <h2 data-i18n="modalTitle">انتهى الوقت</h2>
+            <p data-i18n="modalDesc">الإحداثيات الصحيحة:</p>
             <div class="final-score" id="finalScoreText">0</div>
-            <button class="btn btn-primary" onclick="closeModalAndReset()">حسناً</button>
+            <button class="btn btn-primary" onclick="closeModalAndReset()" data-i18n="modalBtn">استمرار</button>
         </div>
     </div>
 
     <script>
-        // قراءة الثيم المحفوظ
+        // --- نظام الترجمة المدمج ---
+        const dictionary = {
+            ar: {
+                title: "الإحداثيات", themeRoyal: "ملكي", themeModern: "داكن", themeClassic: "كلاسيك",
+                opt30: "30 ثانية", optInf: "مفتوح", optHelp: "المساعد", optFlip: "تدوير",
+                statScore: "النقاط", statTime: "الوقت", btnStart: "إبدأ التحدي", btnEnd: "إنهاء التحدي",
+                modalTitle: "انتهى الوقت", modalDesc: "الإحداثيات الصحيحة:", modalBtn: "استمرار"
+            },
+            en: {
+                title: "Coordinates", themeRoyal: "Royal", themeModern: "Dark", themeClassic: "Classic",
+                opt30: "30 Sec", optInf: "Infinite", optHelp: "Helper", optFlip: "Flip",
+                statScore: "Score", statTime: "Time", btnStart: "Start Training", btnEnd: "End Training",
+                modalTitle: "Time's Up", modalDesc: "Correct Coordinates:", modalBtn: "Continue"
+            }
+        };
+
+        let currentLang = localStorage.getItem('chessLang') || 'ar';
+        
+        function applyLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('chessLang', lang);
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = lang;
+            document.getElementById('langBtn').innerText = lang === 'ar' ? 'EN' : 'عربي';
+            
+            $('[data-i18n]').each(function() {
+                let key = $(this).attr('data-i18n');
+                if (dictionary[lang][key]) {
+                    if ($(this).is('option')) $(this).text(dictionary[lang][key]);
+                    else $(this).text(dictionary[lang][key]);
+                }
+            });
+        }
+
+        function toggleLanguage() {
+            applyLanguage(currentLang === 'ar' ? 'en' : 'ar');
+        }
+
+        // --- نظام الثيمات ---
         const savedTheme = localStorage.getItem('chessTheme') || 'royal';
         document.body.className = 'theme-' + savedTheme;
         document.getElementById('themeChoice').value = savedTheme;
@@ -126,6 +178,7 @@
             localStorage.setItem('chessTheme', theme);
         }
 
+        // --- متغيرات اللعبة ---
         let score = 0, selectedTime = 30, timeLeft = 30;
         let currentTarget = "", gameActive = false, timerInterval;
         let isFlipped = false, isHelperActive = false;
@@ -141,18 +194,18 @@
         const endModal = document.getElementById('endModal');
         const finalScoreText = document.getElementById('finalScoreText');
 
+        // --- تهيئة الرقعة ---
         $(document).ready(function() {
+            applyLanguage(currentLang);
             var config = {
                 position: 'start',
                 showNotation: true,
-                pieceTheme: function(piece) {
-                    return 'https://images.chesscomfiles.com/chess-themes/pieces/light/150/' + piece.toLowerCase() + '.png';
-                }
+                pieceTheme: function(piece) { return 'https://images.chesscomfiles.com/chess-themes/pieces/light/150/' + piece.toLowerCase() + '.png'; }
             };
             board = Chessboard('board', config);
             $(window).resize(board.resize);
             
-            // اللمس السريع جداً
+            // محرك اللمس السريع
             $(document).on('mousedown touchstart', '#board .square-55d63', function(e) {
                 e.preventDefault();
                 if (!gameActive) return;
@@ -161,6 +214,7 @@
             });
         });
 
+        // --- دوال الأزرار ---
         function toggleHelper() {
             isHelperActive = !isHelperActive;
             if(isHelperActive) helperBtn.classList.add('selected');
@@ -178,7 +232,6 @@
         function selectTime(seconds, btn) {
             if (gameActive) return;
             selectedTime = seconds; timeLeft = seconds;
-            // إزالة التحديد من أزرار الوقت فقط (وليس قلب/مساعد)
             optionsGrid.children[0].classList.remove('selected');
             optionsGrid.children[1].classList.remove('selected');
             btn.classList.add('selected');
@@ -221,8 +274,8 @@
         function startGame() {
             gameActive = true; score = 0; timeLeft = selectedTime; scoreEl.innerText = score;
             startBtn.style.display = 'none'; endBtn.style.display = 'flex'; 
-            optionsGrid.style.opacity = '0.5'; optionsGrid.style.pointerEvents = 'none';
-            targetOverlay.style.opacity = '1';
+            optionsGrid.style.opacity = '0.4'; optionsGrid.style.pointerEvents = 'none';
+            targetOverlay.classList.add('active'); // إظهار الصندوق الزجاجي
             
             board.position('start', false);
             nextSquare();
@@ -238,17 +291,17 @@
         function endGame() {
             if (!gameActive) return; 
             gameActive = false; clearInterval(timerInterval);
-            targetOverlay.style.opacity = '0'; 
+            targetOverlay.classList.remove('active'); // إخفاء الصندوق الزجاجي
             clearBoardHighlights();
             endBtn.style.display = 'none'; 
             
-            // إظهار النافذة المنبثقة الأنيقة بدلاً من alert/confirm
+            // إظهار النافذة المنبثقة
             finalScoreText.innerText = score;
-            endModal.style.display = 'flex';
+            endModal.classList.add('show');
         }
 
         function closeModalAndReset() {
-            endModal.style.display = 'none';
+            endModal.classList.remove('show');
             startBtn.style.display = 'flex'; 
             optionsGrid.style.opacity = '1'; optionsGrid.style.pointerEvents = 'auto';
             if(selectedTime > 0) timerEl.innerText = selectedTime;
@@ -256,4 +309,3 @@
     </script>
 </body>
 </html>
-  
