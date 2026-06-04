@@ -1,172 +1,138 @@
 <!DOCTYPE html>
-<html lang="ar" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="color-scheme" content="dark">
-    <meta name="theme-color" content="#0b1320">
-    <title>تحدي الإحداثيات - Mosul Chess</title>
+    <title>تحدي الإحداثيات - Move by Move</title>
+    
+    <!-- نفس المكتبات المستخدمة في الموقع الرئيسي بالضبط -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" crossorigin="anonymous">
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+    
     <style>
-        /* إعدادات أساسية حديثة وسريعة */
-        html { color-scheme: dark !important; background-color: #0b1320 !important; }
-        :root {
-            --bg-color: #0b1320; 
-            --light-sq: #f4ecd8; 
-            --dark-sq: #b89153; 
-            --btn-bg: #b89153;
-            --btn-text: #0b1320; 
-            --correct-color: rgba(74, 222, 128, 0.5); /* أخضر شفاف هادئ */
-            --wrong-color: rgba(248, 113, 113, 0.7); /* أحمر شفاف للخطأ */
-            --glow-color: #ffcc00;
-        }
-        
-        body { 
-            font-family: 'Cairo', sans-serif; 
-            /* خلفية بتدرج شعاعي يعطي عمقاً للتطبيق دون التأثير على الأداء */
-            background: radial-gradient(circle at 50% 0%, #1a2a44 0%, var(--bg-color) 100%) !important; 
-            color: #ffffff !important; margin: 0; padding: 0; display: flex; 
-            flex-direction: column; align-items: center; min-height: 100vh; overflow: hidden; 
-            user-select: none; -webkit-tap-highlight-color: transparent; 
-            color-scheme: dark !important;
-        }
+        /* --- نفس الثيمات العالمية للموقع الرئيسي (تطابق 100%) --- */
+        body.theme-royal { --bg-color: #D2D2D6; --panel-bg: #F4F1EA; --border-color: #C9A86A; --text-main: #0B174D; --text-muted: #2C447F; --board-light: #F4F1EA; --board-dark: #1A2E73; --primary-color: #0B174D; --primary-hover: #1A2E73; --danger-color: #A8834C; --danger-hover: #8a6a3b; --correct-color: rgba(74, 222, 128, 0.85); --wrong-color: rgba(239, 68, 68, 0.85); --timer-bg: #F4F1EA; --timer-border: #C9A86A; }
+        body.theme-modern { --bg-color: #0f172a; --panel-bg: #1e293b; --border-color: #334155; --text-main: #f8fafc; --text-muted: #94a3b8; --board-light: #cbd5e1; --board-dark: #475569; --primary-color: #3b82f6; --primary-hover: #2563eb; --danger-color: #ef4444; --danger-hover: #dc2626; --correct-color: rgba(74, 222, 128, 0.85); --wrong-color: rgba(239, 68, 68, 0.85); --timer-bg: #0f172a; --timer-border: #334155; }
+        body.theme-classic { --bg-color: #ebecd0; --panel-bg: #ffffff; --border-color: #dcdcdc; --text-main: #2b2b2b; --text-muted: #737373; --board-light: #ebecd0; --board-dark: #739552; --primary-color: #81b64c; --primary-hover: #6a9c3d; --danger-color: #fa4b4b; --danger-hover: #e03c3c; --correct-color: rgba(74, 222, 128, 0.85); --wrong-color: rgba(239, 68, 68, 0.85); --timer-bg: #f8f8f8; --timer-border: #cccccc; }
 
-        .top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 10px 20px; box-sizing: border-box; font-size: 1.2rem; direction: rtl; backdrop-filter: blur(10px); background: rgba(11, 19, 32, 0.8); }
-        .top-bar .icon { cursor: pointer; font-size: 1.5rem; color: #f4ecd8; opacity: 0.8; transition: opacity 0.2s; }
-        .top-bar .icon:active { opacity: 1; transform: scale(0.9); }
-        
-        .time-options { display: flex; gap: 10px; margin: 10px 0; direction: rtl; }
-        .option-btn { background-color: rgba(255, 255, 255, 0.05); color: #ffffff; border: 1px solid rgba(184, 145, 83, 0.3); padding: 6px 18px; border-radius: 50px; cursor: pointer; font-family: 'Cairo', sans-serif; font-size: 0.9rem; transition: all 0.2s ease; }
-        .option-btn.selected { background-color: var(--btn-bg); color: var(--btn-text); border-color: transparent; box-shadow: 0 4px 10px rgba(184, 145, 83, 0.3); }
+        * { box-sizing: border-box; font-family: 'Inter', 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow: hidden; user-select: none; transition: background-color 0.4s ease, color 0.4s ease; }
+        .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; align-items: center; margin-top: 2vh;}
 
-        .board-wrapper { position: relative; width: 95vw; height: 95vw; max-width: 400px; max-height: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; border: 2px solid var(--dark-sq); }
-        .board { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: 100%; height: 100%; }
+        /* الشريط العلوي */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 10px 0; margin-bottom: 10px; border-bottom: 2px solid var(--border-color); }
+        .top-bar h2 { margin: 0; font-weight: 900; font-size: 1.4rem; color: var(--text-main); }
+        .icon-btn { background: var(--panel-bg); border: 2px solid var(--border-color); color: var(--text-main); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 700; transition: all 0.2s; font-size: 1rem; }
+        .icon-btn:active { transform: scale(0.95); }
+        select.theme-select { background: var(--panel-bg); color: var(--text-main); border: 2px solid var(--border-color); border-radius: 8px; padding: 6px 10px; font-weight: 700; outline: none; cursor: pointer; }
+
+        /* أزرار الوقت */
+        .time-options { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; justify-content: center; }
+        .option-btn { background: var(--panel-bg); color: var(--text-muted); border: 2px solid var(--border-color); padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: 800; transition: all 0.2s ease; font-size: 0.95rem;}
+        .option-btn.selected { background: var(--primary-color); color: #ffffff; border-color: var(--primary-color); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+
+        /* الرقعة بنفس إعدادات الموقع الرئيسي */
+        .board-wrapper { width: 100% !important; max-width: 500px; aspect-ratio: 1 / 1; margin: 0 auto; border-radius: 6px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; border: 3px solid var(--border-color); touch-action: none !important; }
+        #board { width: 100% !important; }
+        .white-1e1d7 { background-color: var(--board-light) !important; color: var(--board-dark) !important; }
+        .black-3c85d { background-color: var(--board-dark) !important; color: var(--board-light) !important; }
+
+        /* تأثيرات النقر والمساعد الفورية */
+        .correct { background-color: var(--correct-color) !important; animation: popIn 0.15s ease-out; z-index: 5; }
+        .wrong { background-color: var(--wrong-color) !important; animation: shakeWrong 0.2s ease-in-out; z-index: 5; }
+        .glow { box-shadow: inset 0 0 0 4px rgba(234, 179, 8, 0.8) !important; }
         
-        /* الحفاظ على محرك اللمس السريع جداً */
-        .square { display: flex; align-items: center; justify-content: center; cursor: pointer; background-size: 100%; background-position: center; background-repeat: no-repeat; position: relative; }
+        @keyframes popIn { 0% { transform: scale(0.9); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes shakeWrong { 0%, 100% { transform: translateX(0); } 33% { transform: translateX(-4px); } 66% { transform: translateX(4px); } }
         
-        .light { background-color: var(--light-sq) !important; color: var(--dark-sq) !important; }
-        .dark { background-color: var(--dark-sq) !important; color: var(--light-sq) !important; }
+        /* الهدف (الحرف والرقم) */
+        #target-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 6rem; font-weight: 900; color: #ffffff; text-shadow: 0px 5px 20px rgba(0,0,0,0.8); pointer-events: none; font-family: 'Inter', sans-serif; display: none; z-index: 10; letter-spacing: -2px; }
         
-        /* 🚀 يومض فقط دون تغيير الحجم (Lichess Style) */
-        .correct { animation: flashCorrect 0.15s ease-out; }
-        @keyframes flashCorrect { 0% { background-color: var(--light-sq); } 50% { background-color: var(--correct-color) !important; } 100% { background-color: var(--light-sq); } }
-        .dark.correct { animation: flashCorrectDark 0.15s ease-out; }
-        @keyframes flashCorrectDark { 0% { background-color: var(--dark-sq); } 50% { background-color: var(--correct-color) !important; } 100% { background-color: var(--dark-sq); } }
+        /* العدادات بنفس تصميم المؤقت الرئيسي */
+        .stats-container { display: flex; justify-content: space-between; width: 100%; margin-top: 15px; gap: 10px;}
+        .stat-box { flex: 1; background: var(--timer-bg); border: 2px solid var(--timer-border); border-radius: 10px; padding: 12px; text-align: center; }
+        .stat-label { color: var(--text-muted); font-size: 0.9rem; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-value { font-family: 'Inter', monospace; font-size: 2rem; color: var(--text-main); font-weight: 900; line-height: 1; }
         
-        /* 🚀 اهتزاز سريع جداً وخفيف للخطأ */
-        .wrong { animation: shakeWrong 0.2s ease-in-out; background-color: var(--wrong-color) !important; }
-        @keyframes shakeWrong { 0%, 100% { transform: translateX(0); } 33% { transform: translateX(-3px); } 66% { transform: translateX(3px); } }
-        
-        .glow { box-shadow: inset 0 0 15px var(--glow-color), 0 0 8px var(--glow-color) !important; animation: pulse-glow 0.8s infinite alternate; z-index: 5; }
-        @keyframes pulse-glow { from { opacity: 0.6; } to { opacity: 1; } }
-        
-        .label-rank { position: absolute; top: 1px; left: 2px; font-size: 0.75rem; font-weight: 800; font-family: sans-serif; opacity: 0.6; }
-        .label-file { position: absolute; bottom: -1px; right: 2px; font-size: 0.75rem; font-weight: 800; font-family: sans-serif; opacity: 0.6; }
-        
-        /* 🚀 ظهور فوري (Instant) للهدف، حذفنا الأنيميشن البطيء */
-        #target-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 7rem; font-weight: 800; color: #ffffff; text-shadow: 0px 4px 15px rgba(0,0,0,0.8), 0 0 20px rgba(184, 145, 83, 0.3); pointer-events: none; font-family: Arial, sans-serif; text-transform: lowercase; display: none; z-index: 10; opacity: 0.9; }
-        
-        .stats-container { display: flex; justify-content: space-around; width: 100%; max-width: 400px; margin-top: 15px; direction: rtl; }
-        .stat-box { text-align: center; flex: 1; }
-        .stat-label { color: #a89f8f; font-size: 0.9rem; margin-bottom: -5px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        /* 🚀 خط رقمي حديث للعدادات */
-        .stat-value { font-family: 'Courier New', Courier, monospace; font-size: 3.5rem; color: var(--dark-sq); font-weight: bold; text-shadow: 0 2px 5px rgba(0,0,0,0.3); }
-        
-        .controls-container { display: flex; justify-content: center; width: 100%; margin-top: 15px; }
-        .start-btn { background-color: var(--btn-bg) !important; color: var(--btn-text) !important; border: none; border-radius: 50px; padding: 12px 60px; font-size: 1.3rem; font-weight: 800; font-family: 'Cairo', sans-serif; cursor: pointer; transition: all 0.2s; box-shadow: 0 5px 15px rgba(184, 145, 83, 0.2); }
-        .start-btn:active { transform: scale(0.96); box-shadow: 0 2px 5px rgba(184, 145, 83, 0.2); }
-        
-        .end-btn { background: linear-gradient(135deg, #ef4444, #b91c1c) !important; color: #ffffff !important; border: none; border-radius: 50px; padding: 12px 60px; font-size: 1.3rem; font-weight: 800; font-family: 'Cairo', sans-serif; cursor: pointer; display: none; }
+        /* الأزرار المطابقة للموقع الرئيسي */
+        .controls-container { width: 100%; margin-top: 15px; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 1.2rem; font-weight: 900; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; justify-content: center; align-items: center; margin-top: 10px; }
+        .btn-primary { background: var(--primary-color); color: #ffffff; }
+        .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+        .btn-danger { background: var(--danger-color); color: #ffffff; display: none; }
+        .btn-danger:active { transform: translateY(2px); }
     </style>
 </head>
-<body>
+<body class="theme-royal">
 
-    <div class="top-bar">
-        <div class="icon" onclick="toggleFlip()" title="تدوير الرقعة">🔄</div>
-        <div>تحدي الإحداثيات</div>
-        <div class="icon" id="helper-icon" onclick="toggleHelper()" title="تشغيل/إطفاء المساعد" style="opacity: 0.4;">💡</div>
-    </div>
-
-    <div class="time-options" id="time-options">
-        <button class="option-btn selected" onclick="selectTime(30, this)">30 ثانية</button>
-        <button class="option-btn" onclick="selectTime(0, this)">بلا حدود</button>
-    </div>
-
-    <div class="board-wrapper">
-        <div class="board" id="board"></div>
-        <div id="target-overlay"></div>
-    </div>
-
-    <div class="stats-container">
-        <div class="stat-box">
-            <div class="stat-label">النقاط</div>
-            <div class="stat-value" id="score">0</div>
+    <div class="container">
+        <div class="top-bar">
+            <h2>تحدي الإحداثيات</h2>
+            <select class="theme-select" id="themeChoice" onchange="changeTheme(this.value)">
+                <option value="royal">ملكي</option>
+                <option value="modern">داكن</option>
+                <option value="classic">كلاسيك</option>
+            </select>
         </div>
-        <div class="stat-box">
-            <div class="stat-label">الوقت</div>
-            <div class="stat-value" id="timer">30</div>
-        </div>
-    </div>
 
-    <div class="controls-container">
-        <button class="start-btn" id="start-btn" onclick="startGame()">إبدأ التحدي</button>
-        <button class="end-btn" id="end-btn" onclick="endGame()">إنهاء وحفظ</button>
+        <div class="time-options" id="time-options">
+            <button class="option-btn selected" onclick="selectTime(30, this)">30 ثانية</button>
+            <button class="option-btn" onclick="selectTime(0, this)">بلا حدود</button>
+            <button class="icon-btn" id="helper-icon" onclick="toggleHelper()" title="المساعد" style="opacity: 0.5;">💡 مساعدة</button>
+            <button class="icon-btn" onclick="toggleFlip()" title="تدوير الرقعة">🔄 قلب</button>
+        </div>
+
+        <div class="board-wrapper">
+            <div id="board"></div>
+            <div id="target-overlay"></div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-box">
+                <div class="stat-label">النقاط</div>
+                <div class="stat-value" id="score">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">الوقت</div>
+                <div class="stat-value" id="timer">30</div>
+            </div>
+        </div>
+
+        <div class="controls-container">
+            <button class="btn btn-primary" id="start-btn" onclick="startGame()">إبدأ التحدي 🚀</button>
+            <button class="btn btn-danger" id="end-btn" onclick="endGame()">إنهاء التحدي 🛑</button>
+        </div>
     </div>
 
     <script>
+        // --- تهيئة الثيمات بناءً على ما اختاره اللاعب مسبقاً في الموقع الرئيسي ---
+        const savedTheme = localStorage.getItem('chessTheme') || 'royal';
+        document.body.className = 'theme-' + savedTheme;
+        document.getElementById('themeChoice').value = savedTheme;
+
+        function changeTheme(theme) {
+            document.body.className = 'theme-' + theme;
+            localStorage.setItem('chessTheme', theme);
+        }
+
         const tg = window.Telegram.WebApp;
         tg.expand();
-        if (tg.setHeaderColor) { tg.setHeaderColor('#0b1320'); }
-        document.documentElement.style.colorScheme = 'dark';
 
-        // دالة الاهتزاز التقنية (Vibration API)
         function triggerHaptic(style) {
-            if (!tg.HapticFeedback) return; // تأكد من وجود الميزة
+            if (!tg.HapticFeedback) return;
             if (style === 'light') tg.HapticFeedback.impactOccurred('light');
             if (style === 'success') tg.HapticFeedback.notificationOccurred('success');
             if (style === 'error') tg.HapticFeedback.notificationOccurred('error');
         }
 
-        // دالة أنيميشن عداد النقاط
-        function animateScore(start, end) {
-            let current = start;
-            const range = end - start;
-            const increment = end > start ? 1 : -1;
-            const stepTime = Math.abs(Math.floor(200 / range)); // السرعة الكلية للانتقال 200ms
-            const timer = setInterval(() => {
-                current += increment;
-                scoreEl.innerText = current;
-                if (current == end) clearInterval(timer);
-            }, stepTime);
-        }
+        let score = 0, selectedTime = 30, timeLeft = 30;
+        let currentTarget = "", gameActive = false, timerInterval;
+        let isFlipped = false, isHelperActive = false;
+        let board = null;
 
-        const pieceBase = 'https://lichess1.org/assets/piece/cburnett/';
-        const pieces = {
-            'r': pieceBase + 'bR.svg', 'n': pieceBase + 'bN.svg', 'b': pieceBase + 'bB.svg',
-            'q': pieceBase + 'bQ.svg', 'k': pieceBase + 'bK.svg', 'p': pieceBase + 'bP.svg',
-            'R': pieceBase + 'wR.svg', 'N': pieceBase + 'wN.svg', 'B': pieceBase + 'wB.svg',
-            'Q': pieceBase + 'wQ.svg', 'K': pieceBase + 'wK.svg', 'P': pieceBase + 'wP.svg'
-        };
-
-        const initialPosition = [
-            ['r','n','b','q','k','b','n','r'], ['p','p','p','p','p','p','p','p'],
-            ['','','','','','','',''], ['','','','','','','',''],
-            ['','','','','','','',''], ['','','','','','','',''],
-            ['P','P','P','P','P','P','P','P'], ['R','N','B','Q','K','B','N','R']
-        ];
-
-        let score = 0;
-        let selectedTime = 30; 
-        let timeLeft = 30;
-        let currentTarget = "";
-        let gameActive = false;
-        let timerInterval;
-        let isFlipped = false; 
-        let isHelperActive = false;
-
-        const boardEl = document.getElementById('board');
         const targetOverlay = document.getElementById('target-overlay');
         const scoreEl = document.getElementById('score');
         const timerEl = document.getElementById('timer');
@@ -175,11 +141,31 @@
         const helperIcon = document.getElementById('helper-icon');
         const timeOptionsDiv = document.getElementById('time-options');
 
+        // تهيئة الرقعة باستخدام نفس مكتبة الموقع الرئيسي
+        $(document).ready(function() {
+            var config = {
+                position: 'start',
+                showNotation: true,
+                pieceTheme: function(piece) {
+                    return 'https://images.chesscomfiles.com/chess-themes/pieces/light/150/' + piece.toLowerCase() + '.png';
+                }
+            };
+            board = Chessboard('board', config);
+            $(window).resize(board.resize);
+            
+            // محرك اللمس السريع جداً لالتقاط المربعات
+            $(document).on('mousedown touchstart', '#board .square-55d63', function(e) {
+                e.preventDefault();
+                if (!gameActive) return;
+                let square = $(this).attr('data-square');
+                handleSquareClick(square, $(this));
+            });
+        });
+
         function toggleHelper() {
             isHelperActive = !isHelperActive;
-            helperIcon.style.opacity = isHelperActive ? '1' : '0.4';
-            helperIcon.style.textShadow = isHelperActive ? '0 0 10px #ffcc00' : 'none';
-            triggerHaptic('light'); // اهتزاز خفيف عند الضغط
+            helperIcon.style.opacity = isHelperActive ? '1' : '0.5';
+            triggerHaptic('light');
             applyHelperGlow();
         }
 
@@ -187,140 +173,86 @@
             if (gameActive) return; 
             isFlipped = !isFlipped;
             triggerHaptic('light');
-            createBoard();
+            board.orientation(isFlipped ? 'black' : 'white'); // استخدام ميزة المكتبة المباشرة
+            applyHelperGlow();
         }
 
         function selectTime(seconds, btn) {
             if (gameActive) return;
-            selectedTime = seconds;
-            timeLeft = seconds;
+            selectedTime = seconds; timeLeft = seconds;
             document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
             timerEl.innerText = seconds === 0 ? "∞" : seconds;
             triggerHaptic('light');
         }
 
-        function createBoard() {
-            boardEl.innerHTML = "";
-            for (let r = 0; r < 8; r++) {
-                for (let f = 0; f < 8; f++) {
-                    const visualRank = isFlipped ? r + 1 : 8 - r;
-                    const visualFileIdx = isFlipped ? 7 - f : f;
-                    const fileStr = String.fromCharCode(97 + visualFileIdx); 
-                    const squareName = fileStr + visualRank;
-
-                    const square = document.createElement('div');
-                    square.classList.add('square');
-                    square.classList.add((r + f) % 2 === 0 ? 'light' : 'dark');
-                    square.dataset.name = squareName;
-
-                    const pieceRow = isFlipped ? 7 - r : r;
-                    const pieceCol = isFlipped ? 7 - f : f;
-                    const pieceType = initialPosition[pieceRow][pieceCol];
-                    if (pieceType !== '') {
-                        square.style.backgroundImage = `url(${pieces[pieceType]})`;
-                    }
-
-                    if (f === 0) {
-                        const rankLabel = document.createElement('span');
-                        rankLabel.classList.add('label-rank');
-                        rankLabel.innerText = visualRank;
-                        square.appendChild(rankLabel);
-                    }
-                    if (r === 7) {
-                        const fileLabel = document.createElement('span');
-                        fileLabel.classList.add('label-file');
-                        fileLabel.innerText = fileStr;
-                        square.appendChild(fileLabel);
-                    }
-                    
-                    // استخدام محرك اللمس السريع جداً الخاص بنا (Zero Latency)
-                    square.addEventListener('mousedown', (e) => { e.preventDefault(); handleSquareClick(square); });
-                    square.addEventListener('touchstart', (e) => { e.preventDefault(); handleSquareClick(square); });
-                    
-                    boardEl.appendChild(square);
-                }
-            }
-            applyHelperGlow();
+        function clearBoardHighlights() {
+            $('#board .square-55d63').removeClass('glow correct wrong');
         }
 
         function applyHelperGlow() {
-            document.querySelectorAll('.square').forEach(sq => sq.classList.remove('glow'));
+            clearBoardHighlights();
             if (isHelperActive && gameActive && currentTarget) {
-                const targetSq = document.querySelector(`.square[data-name="${currentTarget}"]`);
-                if (targetSq) { targetSq.classList.add('glow'); }
+                $('#board .square-' + currentTarget).addClass('glow');
             }
         }
 
         function nextSquare() {
-            const randomFile = String.fromCharCode(97 + Math.floor(Math.random() * 8));
+            const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+            const randomFile = files[Math.floor(Math.random() * 8)];
             const randomRank = Math.floor(Math.random() * 8) + 1;
             currentTarget = randomFile + randomRank;
             
             targetOverlay.innerText = currentTarget;
-            // يظهر فوراً بدون أي أنيميشن بطيء
             applyHelperGlow();
         }
 
-        function handleSquareClick(square) {
-            if (!gameActive) return;
-
-            if (square.dataset.name === currentTarget) {
-                animateScore(score, score + 1); // أنيميشن عداد النقاط
-                score++;
+        function handleSquareClick(squareName, squareElement) {
+            if (squareName === currentTarget) {
+                score++; scoreEl.innerText = score;
+                triggerHaptic('success');
                 
-                triggerHaptic('success'); // اهتزاز "نجاح" تقني
+                clearBoardHighlights();
+                squareElement.addClass('correct');
                 
-                square.classList.add('correct');
-                // يومض بسرعة جداً وينتقل فوراً
-                setTimeout(() => {
-                    square.classList.remove('correct');
-                    nextSquare();
+                setTimeout(() => { 
+                    squareElement.removeClass('correct'); 
+                    nextSquare(); 
                 }, 100); 
             } else {
-                triggerHaptic('error'); // اهتزاز "خطأ" قوي
-                square.classList.add('wrong');
-                setTimeout(() => square.classList.remove('wrong'), 200);
+                triggerHaptic('error');
+                squareElement.addClass('wrong');
+                setTimeout(() => squareElement.removeClass('wrong'), 200);
             }
         }
 
         function startGame() {
-            gameActive = true;
-            score = 0;
-            timeLeft = selectedTime;
-            scoreEl.innerText = score;
+            gameActive = true; score = 0; timeLeft = selectedTime; scoreEl.innerText = score;
             triggerHaptic('success');
-            
-            startBtn.style.display = 'none';
-            endBtn.style.display = 'block'; 
-            timeOptionsDiv.style.display = 'none'; 
+            startBtn.style.display = 'none'; endBtn.style.display = 'flex'; 
+            timeOptionsDiv.style.opacity = '0.5'; timeOptionsDiv.style.pointerEvents = 'none';
             targetOverlay.style.display = 'block';
             
+            board.position('start', false); // التأكد من وجود القطع
             nextSquare();
 
             if (selectedTime > 0) {
                 timerInterval = setInterval(() => {
-                    timeLeft--;
-                    timerEl.innerText = timeLeft;
-                    if (timeLeft <= 0) { endGame(); }
+                    timeLeft--; timerEl.innerText = timeLeft;
+                    if (timeLeft <= 0) endGame();
                 }, 1000);
-            } else {
-                timerEl.innerText = "∞"; 
-            }
+            } else { timerEl.innerText = "∞"; }
         }
 
         function endGame() {
             if (!gameActive) return; 
-            gameActive = false;
-            clearInterval(timerInterval);
-            targetOverlay.style.display = 'none';
-            applyHelperGlow();
+            gameActive = false; clearInterval(timerInterval);
+            targetOverlay.style.display = 'none'; 
+            clearBoardHighlights();
             triggerHaptic('success');
-            
             endBtn.style.display = 'none'; 
             
             if (selectedTime === 30 && !isHelperActive) {
-                
                 if (tg.initData && tg.initData !== "") {
                     tg.showPopup({
                         title: "إنتهاء التحدي! 🎉",
@@ -330,31 +262,22 @@
                             {id: 'dont_share', type: 'destructive', text: 'لا، تدريب فقط ❌'}
                         ]
                     }, function(buttonId) {
-                        if (buttonId === 'share') {
-                            tg.sendData(score.toString());
-                            tg.close();
-                        } else {
-                            startBtn.style.display = 'block';
-                            timeOptionsDiv.style.display = 'flex';
-                        }
+                        if (buttonId === 'share') { tg.sendData("SCORE:" + score); tg.close(); } 
+                        else { resetUI(); }
                     });
                 } else {
-                    let share = confirm(`🏆 انتهى التحدي! نتيجتك هي: ${score}\nهل تريد مشاركة النتيجة بالجروب؟ (محاكاة لنظام تيليجرام)`);
-                    if (share) { alert("🚀 تم إرسال النتيجة للبوت بنجاح."); }
-                    startBtn.style.display = 'block';
-                    timeOptionsDiv.style.display = 'flex';
+                    if (confirm(`🏆 انتهى التحدي! نتيجتك: ${score}\nمشاركة النتيجة بالجروب؟`)) { alert("🚀 تم الإرسال للبوت."); }
+                    resetUI();
                 }
-                
             } else {
-                setTimeout(() => {
-                    alert("🎯 انتهى التدريب الشخصي! نتيجتك هي: " + score + "\n⚠️ وضع المساعد أو اللعب اللانهائي لا يسجل في الصدارة.");
-                    startBtn.style.display = 'block';
-                    timeOptionsDiv.style.display = 'flex';
-                }, 100);
+                setTimeout(() => { alert("🎯 انتهى التدريب! النتيجة: " + score); resetUI(); }, 100);
             }
         }
 
-        createBoard(); 
+        function resetUI() {
+            startBtn.style.display = 'flex'; 
+            timeOptionsDiv.style.opacity = '1'; timeOptionsDiv.style.pointerEvents = 'auto';
+        }
     </script>
 </body>
 </html>
