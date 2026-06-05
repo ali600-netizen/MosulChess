@@ -60,9 +60,14 @@
         /* ألوان النقر (استجابة فورية) */
         .correct { background-color: rgba(74, 222, 128, 0.85) !important; z-index: 5;}
         .wrong { background-color: rgba(239, 68, 68, 0.85) !important; z-index: 5;}
-        
-        /* --- المساعد السريع والأنيق (إطار أحمر حاد كالإصدار القديم) --- */
-        .glow { box-shadow: inset 0 0 0 4px #ef4444 !important; z-index: 5;}
+        /* --- المساعد السريع والأنيق (إضاءة ذهبية تملأ المربع بالكامل) --- */
+.glow { 
+    background-color: rgba(234, 179, 8, 0.75) !important; /* لون ذهبي مريح للعين */
+    box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.2) !important; /* لمسة توهج داخلي خفيفة */
+    z-index: 5;
+    transition: background-color 0.1s ease;
+}
+
 
         /* العدادات */
         .stats-container { display: flex; justify-content: space-between; width: 100%; margin-top: 15px; gap: 10px; }
